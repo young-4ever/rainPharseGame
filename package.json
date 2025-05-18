@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/你的用户名/rain-phaser-game"
+    "url": "https://github.com/young-4ever/rainPharseGame.git"
   },
   "keywords": [
     "phaser",
@@ -53,6 +53,6 @@
     "countdown",
     "progress-bar"
   ],
-  "author": "你的名字",
+  "author": "young-4ever",
   "license": "MIT"
 }
