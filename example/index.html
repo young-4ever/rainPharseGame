@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rain Phaser Game Example</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+    #game-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+    .controls {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 99999;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+    }
+    button {
+      padding: 8px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container"></div>
+  <div class="controls">
+    <button id="start-btn">Start Game</button>
+    <button id="stop-btn">Stop Game</button>
+    <label>
+      <input type="checkbox" id="debug-mode"> Debug Mode
+    </label>
+  </div>
+
+  <!-- 加载必要的库 -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.88.0/dist/phaser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/phaser3-rex-plugins@1.80.0/dist/rexroundrectangleprogressplugin.min.js"></script>
+  <script src="../dist/rain-phaser.umd.js"></script>
+
+  <script>
+    // 示例图片资源
+    const resources = [
+      { id: 'clockBg', src: 'assets/clock-bg.png' },
+      { id: 'progressBg', src: 'assets/progress-bg.png' },
+      { id: 'redEnvelope', src: 'assets/red-envelope.png' },
+      { id: 'goldEnvelope', src: 'assets/gold-envelope.png' },
+      { id: 'gotEnvelope', src: 'assets/got-envelope.png' }
+    ];
+
+    let gameManager = null;
+    let phaserGame = null;
+
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('stop-btn').addEventListener('click', stopGame);
+
+    function startGame() {
+      if (gameManager) {
+        stopGame();
+      }
+
+      // 初始化Phaser游戏并配置Rex插件
+      phaserGame = RainPhaser.initPhaserWithPlugins({
+        type: Phaser.AUTO,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        parent: 'game-container',
+        transparent: true,
+        scale: {
+          mode: Phaser.Scale.RESIZE,
+          autoCenter: Phaser.Scale.CENTER_BOTH
+        }
+      });
+
+      // 创建GameManager
+      gameManager = RainPhaser.createGameManager();
+
+      // 获取调试模式设置
+      const debugMode = document.getElementById('debug-mode').checked;
+
+      // 启动游戏
+      const game = gameManager.start(
+        debugMode,  // 调试模式
+        10,         // 10秒游戏时长
+        resources,  // 图片资源
+        true,       // 随机角度
+        400,        // 红包频率
+        800         // 金包频率
+      );
+
+      // 监听游戏结束事件
+      game.events.on('gameTimeUp', function(result) {
+        console.log('Game Over!', result);
+        alert(`游戏结束! 红包: ${result.red}, 金包: ${result.gold}, 总计: ${result.total}`);
+      });
+    }
+
+    function stopGame() {
+      if (gameManager) {
+        gameManager.destroy();
+        gameManager = null;
+      }
+      
+      if (phaserGame) {
+        phaserGame.destroy(true);
+        phaserGame = null;
+      }
+    }
+  </script>
+</body>
+</html> 
